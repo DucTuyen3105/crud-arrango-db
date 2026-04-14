@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="container">
+    <h1>User Management (ArangoDB)</h1>
+
+    <section class="card">
+        <h2 id="formTitle">Create User</h2>
+        <form id="userForm">
+            <input type="hidden" id="userId">
+            <div class="field">
+                <label for="name">Name</label>
+                <input id="name" type="text" required>
+            </div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="email" required>
+            </div>
+            <div class="field">
+                <label for="age">Age</label>
+                <input id="age" type="number" min="0" required>
+            </div>
+            <div class="actions">
+                <button type="submit" id="submitBtn">Create</button>
+                <button type="button" id="cancelEditBtn" class="secondary hidden">Cancel Edit</button>
+            </div>
+        </form>
+        <p id="message"></p>
+    </section>
+
+    <section class="card">
+        <h2>User List</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+        </table>
+    </section>
+</main>
+
+<script src="/js/users.js"></script>
+</body>
+</html>

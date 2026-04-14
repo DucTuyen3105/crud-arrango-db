@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  arangodb:
+    image: arangodb:3.12.0
+    container_name: arango
+    ports:
+      - "8529:8529"
+    environment:
+      ARANGO_ROOT_PASSWORD: 123456
+    volumes:
+      - arango_data:/var/lib/arangodb3
+    networks:
+      - demo-network
+
+  spring-app:
+    build: .
+    container_name: demo-app
+    ports:
+      - "8080:8080"
+    environment:
+      - ARANGO_HOST=arangodb
+      - ARANGO_PORT=8529
+      - ARANGO_USERNAME=root
+      - ARANGO_PASSWORD=123456
+      - ARANGO_DATABASE=user_management
+    depends_on:
+      - arangodb
+    networks:
+      - demo-network
+
+volumes:
+  arango_data:
+
+networks:
+  demo-network:
+    driver: bridge

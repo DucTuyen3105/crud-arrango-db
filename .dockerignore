@@ -1,0 +1,14 @@
+target/
+.git/
+.gitignore
+.DS_Store
+*.log
+.idea/
+*.iml
+.vscode/
+node_modules/
+*.md
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+*.cmd:Zone.Identifier
+mvnw.cmd:Zone.Identifier
