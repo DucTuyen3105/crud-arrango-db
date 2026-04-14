@@ -44,24 +44,34 @@ public class ArangoConfig {
 
     @PostConstruct
     public void initDatabase() {
-        ArangoDB client = new ArangoDB.Builder()
-                .host(host, port)
-                .user(username)
-                .password(password)
-                .build();
-        try {
-            if (!client.db(databaseName).exists()) {
-                client.createDatabase(databaseName);
+        int maxRetries = 10;
+        int delaySeconds = 5;
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            ArangoDB client = new ArangoDB.Builder()
+                    .host(host, port)
+                    .user(username)
+                    .password(password)
+                    .build();
+            try {
+                if (!client.db(databaseName).exists()) {
+                    client.createDatabase(databaseName);
+                }
+                ArangoDatabase db = client.db(databaseName);
+                if (!db.collection("users").exists()) {
+                    db.createCollection("users");
+                }
+                log.info("ArangoDB initialized successfully.");
+                return;
+            } catch (Exception ex) {
+                log.warn("ArangoDB init attempt {}/{} failed: {}", attempt, maxRetries, ex.getMessage());
+                if (attempt < maxRetries) {
+                    try { Thread.sleep(delaySeconds * 1000L); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); return; }
+                } else {
+                    log.error("Could not initialize ArangoDB after {} attempts.", maxRetries);
+                }
+            } finally {
+                client.shutdown();
             }
-            ArangoDatabase db = client.db(databaseName);
-            if (!db.collection("users").exists()) {
-                db.createCollection("users");
-            }
-        } catch (Exception ex) {
-            // Keep the web app bootable even when ArangoDB is down.
-            log.warn("ArangoDB is not reachable during startup. Skipping init for now: {}", ex.getMessage());
-        } finally {
-            client.shutdown();
         }
     }
 }

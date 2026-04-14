@@ -12,6 +12,12 @@ services:
       - arango_data:/var/lib/arangodb3
     networks:
       - demo-network
+    healthcheck:
+      test: ["CMD", "arangosh", "--server.username", "root", "--server.password", "123456", "--javascript.execute-string", "db._version()"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
 
   spring-app:
     build: .
@@ -25,7 +31,9 @@ services:
       - ARANGO_PASSWORD=123456
       - ARANGO_DATABASE=user_management
     depends_on:
-      - arangodb
+      arangodb:
+        condition: service_healthy
+    restart: on-failure
     networks:
       - demo-network
 
